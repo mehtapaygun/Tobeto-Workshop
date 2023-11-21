@@ -21,10 +21,11 @@ class _MainPageState extends State<MainPage> {
           IconButton(
             onPressed: () {
               showModalBottomSheet(
-                  context: context,
-                  builder: (ctx) {
-                    return NewExpense();
-                  });
+                context: context,
+                builder: (ctx) {
+                  return NewExpense();
+                },
+              );
             },
             icon: const Icon(Icons.add_box),
             iconSize: 40,
