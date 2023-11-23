@@ -1,29 +1,53 @@
 import 'package:flutter/material.dart';
+import 'package:workshop_1411/data/data.dart';
+import 'package:workshop_1411/models/expense.dart';
 import 'package:workshop_1411/pages/expense_page.dart';
 import 'package:workshop_1411/widgets/new_expense.dart';
 
 class MainPage extends StatefulWidget {
-  const MainPage({super.key});
+  const MainPage({Key? key}) : super(key: key);
 
   @override
-  State<MainPage> createState() => _MainPageState();
+  _MainPageState createState() => _MainPageState();
 }
 
 class _MainPageState extends State<MainPage> {
+  int refreshNumber = 0;
+  late Expense removedExpense;
+  late int indexNumber;
+  List<Expense> expense = listExpenseItem();
+  addExpense(Expense newExpense) {
+    setState(() {
+      expense.add(newExpense);
+    });
+  }
+
+  removeExpense(int index, Expense newExpense) {
+    setState(() {
+      removedExpense = newExpense;
+      indexNumber = index;
+      expense.remove(newExpense);
+    });
+  }
+
+  undoExpense() {
+    setState(() {
+      expense.insert(indexNumber, removedExpense);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        foregroundColor: Colors.white,
         title: const Text("Expense App"),
-        backgroundColor: Colors.deepPurpleAccent,
         actions: [
           IconButton(
             onPressed: () {
               showModalBottomSheet(
                 context: context,
-                builder: (ctx) {
-                  return NewExpense();
+                builder: (context) {
+                  return NewExpense(addExpense);
                 },
               );
             },
@@ -32,7 +56,7 @@ class _MainPageState extends State<MainPage> {
           )
         ],
       ),
-      body: const ExpensesPage(),
+      body: ExpensesPage(expenses, removeExpense, undoExpense),
     );
   }
 }

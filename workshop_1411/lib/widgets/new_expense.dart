@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class NewExpense extends StatefulWidget {
-  const NewExpense({Key? key}) : super(key: key);
+  const NewExpense(this.onAdd, {Key? key}) : super(key: key);
+  final Function(Expense expense) onAdd;
 
   @override
   _NewExpenseState createState() => _NewExpenseState();
@@ -15,7 +16,7 @@ class _NewExpenseState extends State<NewExpense> {
   DateTime? _selectedDate;
   Category _selectedCategory = Category.work;
 
-  void _openDatePicker() async {
+  Future<void> _showDatePicker(BuildContext context) async {
     DateTime today = DateTime.now();
     DateTime oneYearAgo = DateTime(today.year - 1, today.month, today.day);
     DateTime? selectedDate = await showDatePicker(
@@ -23,14 +24,19 @@ class _NewExpenseState extends State<NewExpense> {
         initialDate: _selectedDate == null ? today : _selectedDate!,
         firstDate: oneYearAgo,
         lastDate: today);
-    setState(() {
-      _selectedDate = selectedDate;
-    });
+    setState(
+      () {
+        if (selectedDate == null) {
+        } else {
+          _selectedDate = selectedDate;
+        }
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       width: double.infinity,
       child: Padding(
         padding: EdgeInsets.all(12.0),
@@ -41,15 +47,18 @@ class _NewExpenseState extends State<NewExpense> {
               maxLength: 50,
               decoration: InputDecoration(labelText: "Harcama Adı"),
             ),
-            TextField(
-              controller: _expensePriceController,
-              keyboardType: TextInputType.number,
-              decoration: InputDecoration(labelText: "Harcama Miktarı"),
-            ),
             Row(
               children: [
+                Expanded(
+                  child: TextField(
+                    controller: _expensePriceController,
+                    keyboardType: TextInputType.number,
+                    decoration: const InputDecoration(
+                        labelText: "Harcama Miktarı", prefixText: "₺"),
+                  ),
+                ),
                 IconButton(
-                  onPressed: () => _openDatePicker(),
+                  onPressed: () => _showDatePicker(context),
                   icon: const Icon(Icons.calendar_month),
                 ),
                 Text(_selectedDate == null
@@ -89,8 +98,16 @@ class _NewExpenseState extends State<NewExpense> {
                 ),
                 ElevatedButton(
                   onPressed: () {
-                    print(
-                        "Kaydedilen değer: ${_expenseNameController.text} ${_expensePriceController.text}");
+                    double? price =
+                        double.tryParse(_expensePriceController.text);
+
+                    Expense expense = Expense(
+                        name: _expenseNameController.text,
+                        price: price!,
+                        date: _selectedDate!,
+                        category: _selectedCategory);
+                    widget.onAdd(expense);
+                    Navigator.pop(context);
                   },
                   child: Text("Ekle"),
                 ),

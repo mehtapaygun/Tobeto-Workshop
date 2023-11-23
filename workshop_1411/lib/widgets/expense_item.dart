@@ -5,7 +5,7 @@ import 'package:workshop_1411/models/expense.dart';
 class ExpenseItem extends StatelessWidget {
   // unnamed argument => default olarak required'dır
   // named argument => belirtmek gerekir
-  const ExpenseItem({Key? key, required this.expense}) : super(key: key);
+  const ExpenseItem(this.expense, {Key? key}) : super(key: key);
   final Expense expense;
 
   @override
