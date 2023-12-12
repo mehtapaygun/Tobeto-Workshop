@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:workshop_0512/data/dummy_data.dart';
 import 'package:workshop_0512/models/category.dart';
+import 'package:workshop_0512/screens/favorites.dart';
 import 'package:workshop_0512/screens/meals.dart';
 import 'package:workshop_0512/widgets/category_card.dart';
 
 class Categories extends StatelessWidget {
   const Categories({Key? key}) : super(key: key);
 
-  // context objesi => statefull widget => context objesi tüm noktalardan erişilebilir
-  // stateless widget => context objesi yalnızca build fonksiyonundan erişilebilir.
   void _changeScreen(Category category, BuildContext context) {
     Navigator.of(context).push(MaterialPageRoute(
         builder: (ctx) => Meals(
@@ -21,12 +20,21 @@ class Categories extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Bir kategori seçin.."),
+        actions: [
+          IconButton(
+              onPressed: () {
+                Navigator.of(context)
+                    .push(MaterialPageRoute(builder: (ctx) => Favorites()));
+              },
+              icon: const Icon(Icons.favorite))
+        ],
       ),
       drawer: Drawer(
         child: ListView(
-          padding: const EdgeInsets.all(16),
+          padding: EdgeInsets.zero,
           children: [
             const DrawerHeader(
+              decoration: BoxDecoration(color: Colors.indigoAccent),
               child: Text("Menü"),
             ),
             ListTile(

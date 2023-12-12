@@ -19,11 +19,11 @@ class CategoryCard extends StatelessWidget {
         padding: const EdgeInsets.all(32),
         decoration: BoxDecoration(
           gradient: LinearGradient(colors: [
-            category.color.withOpacity(0.5),
+            category.color.withOpacity(0.30),
             category.color.withOpacity(0.9)
           ], begin: Alignment.topLeft, end: Alignment.bottomRight),
         ),
-        child: Text(category.name), // global themeden stilleri almaya
+        child: Text(category.name),
       ),
     );
   }
