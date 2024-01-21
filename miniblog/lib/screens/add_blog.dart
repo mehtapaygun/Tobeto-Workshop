@@ -1,8 +1,7 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:http/http.dart' as http;
+import 'package:miniblog/repositories/article_repository.dart';
 
 class AddBlog extends StatefulWidget {
   const AddBlog({Key? key}) : super(key: key);
@@ -18,29 +17,6 @@ class _AddBlogState extends State<AddBlog> {
   String title = "";
   String content = "";
   String author = "";
-
-  submit() async {
-    Uri url = Uri.parse("https://tobetoapi.halitkalayci.com/api/Articles");
-
-    var request = http.MultipartRequest("POST", url);
-
-    request.fields['Title'] = title;
-    request.fields['Content'] = content;
-    request.fields['Author'] = author;
-
-    if (selectedImage != null) {
-      final file =
-          await http.MultipartFile.fromPath("File", selectedImage!.path);
-      request.files.add(file);
-    }
-
-    final response = await request.send();
-
-    if (response.statusCode == 201) {
-      // Ekleme başarılı
-      Navigator.pop(context, true);
-    }
-  }
 
   pickImage() async {
     XFile? selectedFile =
@@ -112,7 +88,10 @@ class _AddBlogState extends State<AddBlog> {
                       if (_formKey.currentState!.validate()) {
                         // formun valid olduğu durum
                         _formKey.currentState!.save();
-                        submit();
+
+                        ArticleRepository()
+                            .addBlog(selectedImage, title, content, author);
+                        Navigator.of(context).pop();
                       }
                     },
                     child: const Text("Blog Ekle"))
